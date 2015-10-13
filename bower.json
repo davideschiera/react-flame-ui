@@ -1,0 +1,8 @@
+{
+    "name": "flame-ui",
+    "dependencies": {
+        "d3": "~2.8.1"
+    },
+    "devDependencies": {
+    }
+}

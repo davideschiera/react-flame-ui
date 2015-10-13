@@ -59,10 +59,10 @@ export default class extends Component {
         var list = nodes.map(function(node) {
             return (
                 <div key={node.node}>
-                    <b>{node.node}</b> - {node.n} calls -
-                    <a onClick={me.svSwitchData.bind(me, node.node, "avg")}>Avg Time</a>: {node.avg}
-                    <a onClick={me.svSwitchData.bind(me, node.node, "min")}>Min Time</a>: {node.min}
-                    <a onClick={me.svSwitchData.bind(me, node.node, "max")}>Max Time</a>: {node.max}
+                    <b>{node.node}</b> - {node.n} calls -&nbsp;
+                    <a onClick={me.svSwitchData.bind(me, node.node, "avg")}>Avg Time</a>: {node.avg}&nbsp;
+                    <a onClick={me.svSwitchData.bind(me, node.node, "min")}>Min Time</a>: {node.min}&nbsp;
+                    <a onClick={me.svSwitchData.bind(me, node.node, "max")}>Max Time</a>: {node.max}&nbsp;
                     <br />
                 </div>
             );

@@ -3,30 +3,17 @@ import React, { Component } from 'react';
 
 export default class extends Component {
     render() {
-        var svTrListStyle = {
-            float: 'left'
-        };
-        var svLegendStyle = {
-            float: 'right'
-        };
-        var clearStyle = {
-            clear: 'both'
-        };
-        var relativeStyle = {
-            position: 'relative'
-        };
-
         return (
             <div>
                 <h1>Sysdig Transaction Flame</h1>
-                <div id="svTrList" style={svTrListStyle}>Transactions:</div>
-                <div id="svLegend" style={svLegendStyle}></div>
-                <div style={clearStyle}></div>
+                <div id="svTrList" style={{float: "left"}}>Transactions:</div>
+                <div id="svLegend" style={{float: "right"}}></div>
+                <div style={{clear: "both"}}></div>
                 <div id="svChartTitle">
                   <h2>Transaction Average</h2>
                 </div>
                 <div id="chart">
-                  <div style={relativeStyle}>
+                  <div style={{position: "relative"}}>
                     <div className="svPopout" id="svPopout"></div>
                   </div>
                 </div>

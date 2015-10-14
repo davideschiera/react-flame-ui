@@ -14,13 +14,16 @@
     display:            block;
     border-radius:      @border-radius;
     background-color:   @background-color;
-    box-shadow:         rgba(0, 0, 0, 0.117647) 0px 1px 3px 0px, rgba(0, 0, 0, 0.117647) 0px 1px 3px 0px;
+    .shadow-z-1;
 
     // Children selectors
     .flex-scaffholding {
         display: flex;
         &.-row {
             flex-direction: row;
+        }
+        &.-column {
+            flex-direction: column;
         }
         .flex-grow {
             flex: 1 0 0;

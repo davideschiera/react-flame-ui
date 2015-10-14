@@ -1,19 +1,116 @@
 import React, { Component } from 'react';
+import fmtTimeInterval from '../helpers/fmt-time-interval';
+import TransactionsTable from './transactions-table';
 import FlameUI from './flame-ui';
+import SpanLog from './span-log';
 
 export default class extends Component {
     constructor(props) {
         super(props);
-        this.state = {
+
+        var data = {
             avg: svFillData(avg),
             min: svFillData(min),
             max: svFillData(max)
         };
+        var nodeIds = Object.keys(data.avg[''].ch);
+
+        this.state = {
+            avg:            data.avg,
+            min:            data.min,
+            max:            data.max,
+            transactions:   nodeIds.map(function(node) {
+                return {
+                    node:   node,
+                    n:      data.avg[""].ch[node].n,
+                    avg:    fmtTimeInterval(data.avg[""].ch[node].tt, 3, 1).output,
+                    min:    fmtTimeInterval(data.min[""].ch[node].tt, 3, 1).output,
+                    max:    fmtTimeInterval(data.max[""].ch[node].tt, 3, 1).output
+                };
+            }),
+            selectedOp:     'avg',
+            selectedSpan:   null,
+            selectedNode:   (nodeIds.length > 0 ? nodeIds[0] : null),
+            flames:         (nodeIds.length > 0 ? createSubTree(data.avg, nodeIds[0]) : null)
+        };
     }
 
     render() {
-        return (<FlameUI data={this.state}></FlameUI>);
+        var content1;
+        var content2;
+
+        // if (this.state.selectedNode) {
+        //     if (this.state.selectedSpan) {
+        //         content2 = (() => {
+        //             return (
+        //                 <SpanLog
+        //                     span =  {this.state.selectedSpan}
+        //                 >
+        //             );
+        //         };
+        //     })();
+
+        //     content1 = (() => {
+        //         (
+        //             <FlameUI
+        //                 node    = {this.state.selectedNode}
+        //                 op      = {this.state.selectedOp}
+        //                 data    = {this.state.flames}
+        //                 select  = {this.selectSpan.bind(this)}
+        //             >
+
+        //             {content2}
+        //         );
+        //     })();
+        // }
+
+        return (
+            <TransactionsTable
+                transactions = {this.state.transactions}
+                select = {this.selectTransaction.bind(this)}
+            ></TransactionsTable>
+        );
     }
+
+    selectTransaction(node, view) {
+        var flames;
+
+        switch (view) {
+            case 'avg':
+                flames = svFillData(avg);
+                break;
+            case 'min':
+                flames = svFillData(min);
+                break;
+            case 'max':
+                flames = svFillData(max);
+                break;
+        }
+
+        this.setState({
+            selectedNode:   node,
+            selectedOp:     view,
+            flames:         createSubTree(flames, node)
+        });
+    }
+
+    selectSpan(d) {
+        var model = this.controller.get('model');
+
+        this.setState({
+            selectedSpan: d
+        });
+    }
+
+}
+
+function createSubTree(fullTree, trName) {
+    var res = {};
+    res[""] = {};
+    res[""].ch = {};
+    res[""].ch[trName] = fullTree[""].ch[trName];
+
+    return res;
 }
 
 function svFillData(tree) {

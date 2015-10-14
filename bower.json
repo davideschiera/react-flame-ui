@@ -1,7 +1,9 @@
 {
     "name": "flame-ui",
     "dependencies": {
-        "d3": "~2.8.1"
+        "d3": "~2.8.1",
+        "material-design-icons-iconfont": "~2.0.3",
+        "reset-css": "~2.0.2011012602"
     },
     "devDependencies": {
     }

@@ -48,9 +48,7 @@ export default class extends Component {
             ></FlameUI>;
 
             if (this.state.selectedSpan) {
-                log = <SpanLog
-                    span =  {this.state.selectedSpan}
-                ></SpanLog>;
+                log = <SpanLog span={this.state.selectedSpan} />;
             }
         }
 

@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "bower install",
     "start": "node server.js",
-    "lint": "eslint src"
+    "build": "webpack --progress --colors"
   },
   "repository": "",
   "devDependencies": {

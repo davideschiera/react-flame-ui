@@ -82,9 +82,10 @@ export default class extends Component {
         }
 
         this.setState({
-            selectedNode:   node,
             selectedOp:     view,
-            flames:         createSubTree(flames, node)
+            selectedSpan:   null,
+            selectedNode:   node,
+            flames:         createSubTree(flames, node),
         });
     }
 

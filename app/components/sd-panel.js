@@ -6,8 +6,7 @@ export default class extends Component {
     render() {
         return (
             <div className={'sd-panel ' + this.props.className}>
-                <SDPanelHeader content = {this.props.headerContent} />
-                <SDPanelContent content = {this.props.content} />
+                {this.props.children}
             </div>
         );
     }

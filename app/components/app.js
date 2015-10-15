@@ -36,39 +36,35 @@ export default class extends Component {
     }
 
     render() {
-        var content1;
-        var content2;
+        var chart;
+        var log;
 
-        // if (this.state.selectedNode) {
-        //     if (this.state.selectedSpan) {
-        //         content2 = (() => {
-        //             return (
-        //                 <SpanLog
-        //                     span =  {this.state.selectedSpan}
-        //                 >
-        //             );
-        //         };
-        //     })();
+        if (this.state.selectedNode) {
+            chart = <FlameUI
+                node =      {this.state.selectedNode}
+                op =        {this.state.selectedOp}
+                data =      {this.state.flames}
+                select =    {this.selectSpan.bind(this)}
+            ></FlameUI>;
 
-        //     content1 = (() => {
-        //         (
-        //             <FlameUI
-        //                 node    = {this.state.selectedNode}
-        //                 op      = {this.state.selectedOp}
-        //                 data    = {this.state.flames}
-        //                 select  = {this.selectSpan.bind(this)}
-        //             >
-
-        //             {content2}
-        //         );
-        //     })();
-        // }
+            if (this.state.selectedSpan) {
+                log = <SpanLog
+                    span =  {this.state.selectedSpan}
+                ></SpanLog>;
+            }
+        }
 
         return (
-            <TransactionsTable
-                transactions = {this.state.transactions}
-                select = {this.selectTransaction.bind(this)}
-            ></TransactionsTable>
+            <div>
+                <TransactionsTable
+                    transactions =  {this.state.transactions}
+                    select =        {this.selectTransaction.bind(this)}
+                ></TransactionsTable>
+
+                {chart}
+
+                {log}
+            </div>
         );
     }
 
@@ -95,13 +91,10 @@ export default class extends Component {
     }
 
     selectSpan(d) {
-        var model = this.controller.get('model');
-
         this.setState({
             selectedSpan: d
         });
     }
-
 }
 
 function createSubTree(fullTree, trName) {

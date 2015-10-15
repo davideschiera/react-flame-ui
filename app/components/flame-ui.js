@@ -21,14 +21,14 @@ export default class extends Component {
 
         var me = this;
 
-        me.chart = null;
+        this.chart = null;
 
-        me.state = {
-            colors:             d3.scale.category10(),
-            lastColorIndex:     0,
-            containerNames:     {},
-            containerNameList:  [],
-            chart:              null,
+        this.colors = d3.scale.category10();
+        this.lastColorIndex = 0;
+        this.containerNames = {};
+        this.containerNameList = [];
+
+        this.state = {
             activeSpan:         null,
             detailMode:         'popout',
             chartContext:       {
@@ -182,16 +182,19 @@ export default class extends Component {
     }
 
     getNodeColor(containerName) {
-        var containerNames = this.state.containerNames;
+        var containerNames = this.containerNames;
         var color = containerNames[containerName];
         if (color === undefined) {
-            color = this.state.colors(this.state.lastColorIndex);
+            color = this.colors(this.lastColorIndex);
             containerNames[containerName] = color;
 
-            this.setState({
-                containerNameList:  this.state.containerNameList.concat([containerName]),
-                lastColorIndex:     this.state.lastColorIndex + 1
-            });
+            this.containerNameList.push(containerName);
+            this.lastColorIndex += 1;
+
+            // this.setState({
+            //     containerNameList:  this.state.containerNameList.concat([containerName]),
+            //     lastColorIndex:     this.state.lastColorIndex + 1
+            // });
         }
 
         return color;
@@ -199,7 +202,7 @@ export default class extends Component {
 
     getLegendItems() {
         var me = this;
-        return this.state.containerNameList.map(function(containerName) {
+        return this.containerNameList.map(function(containerName) {
             return {
                 name:   containerName,
                 color:  me.getNodeColor(containerName)

@@ -28,82 +28,83 @@ export default class extends Component {
         this.containerNames = {};
         this.containerNameList = [];
 
+        this.chartContext = {
+            detailClose: function() {
+                var svPopoutBox = d3.select(`${me.getSelector()} #svPopout`);
+                if (me.state.detailMode !== 'zoom') {
+                    svPopoutBox.html('');
+                    svPopoutBox.style('opacity', null);
+                    svPopoutBox.style('z-index', null);
+                } else {
+                    me.chart.zoomSet({ 'x': 0, 'dx': 1, 'y': 0 });
+                }
+            },
+            detailOpen: function svDetailOpen(d) {
+                function svMakeSubgraphData(d) {
+                    /*
+                        * First, construct everything from the current node to all of its
+                        * leafs.
+                        */
+                    var tree, oldtree;
+
+                    tree = {};
+                    tree[d.data.key] = d.data.value;
+
+                    while (d.parent !== undefined) {
+                        oldtree = tree;
+                        tree = {};
+                        tree[d.parent.data.key] = {
+                            't': d.parent.data.value.t,
+                            'svTotal': d.parent.data.value.svTotal,
+                            'ch': oldtree
+                        };
+                        d = d.parent;
+                    }
+
+                    return (tree);
+                }
+
+                var svPopoutBox = d3.select(`${me.getSelector()} #svPopout`);
+                if (me.state.detailMode !== 'zoom') {
+                    svPopoutBox.html('');
+                    new FlameGraph(
+                        svPopoutBox,
+                        svMakeSubgraphData(d),
+                        null,
+                        null,
+                        me.state.chartContext,
+                        {
+                            getNodeColor:   me.getNodeColor.bind(me)
+                        });
+                    svPopoutBox.style('z-index', 1);
+                    svPopoutBox.style('opacity', 1);
+                } else {
+                    me.chart.zoomSet(d);
+                }
+            },
+            mouseout: function () {
+                me.setState({ activeSpan: null});
+            },
+            mouseover: function (d, det) {
+                me.setState({
+                    activeSpan: {
+                        name:           det.label,
+                        container:      d.data.value.cont,
+                        commandLine:    d.data.value.exe,
+                        timeTotal:      fmtTimeInterval(d.data.value.tt, 3, 1).output,
+                        timeInNode:     fmtTimeInterval(d.data.value.t, 3, 1).output,
+                        childCount:     d.data.value.nconc
+                    }
+                });
+            },
+            select: function(d) {
+                me.props.select(d);
+            }
+        };
+
         this.state = {
             activeSpan:         null,
-            detailMode:         'popout',
-            chartContext:       {
-                detailClose: function() {
-                    var svPopoutBox = d3.select(`${me.getSelector()} #svPopout`);
-                    if (me.state.detailMode !== 'zoom') {
-                        svPopoutBox.html('');
-                        svPopoutBox.style('opacity', null);
-                        svPopoutBox.style('z-index', null);
-                    } else {
-                        me.chart.zoomSet({ 'x': 0, 'dx': 1, 'y': 0 });
-                    }
-                },
-                detailOpen: function svDetailOpen(d) {
-                    function svMakeSubgraphData(d) {
-                        /*
-                         * First, construct everything from the current node to all of its
-                         * leafs.
-                         */
-                        var tree, oldtree;
-
-                        tree = {};
-                        tree[d.data.key] = d.data.value;
-
-                        while (d.parent !== undefined) {
-                            oldtree = tree;
-                            tree = {};
-                            tree[d.parent.data.key] = {
-                                't': d.parent.data.value.t,
-                                'svTotal': d.parent.data.value.svTotal,
-                                'ch': oldtree
-                            };
-                            d = d.parent;
-                        }
-
-                        return (tree);
-                    }
-
-                    var svPopoutBox = d3.select(`${me.getSelector()} #svPopout`);
-                    if (me.state.detailMode !== 'zoom') {
-                        svPopoutBox.html('');
-                        new FlameGraph(
-                            svPopoutBox,
-                            svMakeSubgraphData(d),
-                            null,
-                            null,
-                            me.state.chartContext,
-                            {
-                                getNodeColor:   me.getNodeColor.bind(me)
-                            });
-                        svPopoutBox.style('z-index', 1);
-                        svPopoutBox.style('opacity', 1);
-                    } else {
-                        me.chart.zoomSet(d);
-                    }
-                },
-                mouseout: function () {
-                    me.setState({ activeSpan: null});
-                },
-                mouseover: function (d, det) {
-                    me.setState({
-                        activeSpan: {
-                            name:           det.label,
-                            container:      d.data.value.cont,
-                            commandLine:    d.data.value.exe,
-                            timeTotal:      fmtTimeInterval(d.data.value.tt, 3, 1).output,
-                            timeInNode:     fmtTimeInterval(d.data.value.t, 3, 1).output,
-                            childCount:     d.data.value.nconc
-                        }
-                    });
-                },
-                select: function(d) {
-                    me.props.select(d);
-                }
-            }
+            detailMode:         'popout'
         };
     }
 
@@ -169,7 +170,7 @@ export default class extends Component {
             data,
             null,
             null,
-            this.state.chartContext,
+            this.chartContext,
             {
                 axisLabels:     true,
                 getNodeColor:   this.getNodeColor.bind(this)
@@ -190,12 +191,7 @@ export default class extends Component {
 
             this.containerNameList.push(containerName);
             this.lastColorIndex += 1;
-
-            // this.setState({
-            //     containerNameList:  this.state.containerNameList.concat([containerName]),
-            //     lastColorIndex:     this.state.lastColorIndex + 1
-            // });
-        }
+       }
 
         return color;
     }
